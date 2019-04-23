@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Also needed:
+# * BLACKLIST_DISPOSITION=DROP in shorewall.conf
+
+set -e
+
+temp=`mktemp -d`
+trap finish EXIT 
+
+function finish {
+  test -n "${temp}" && test -d "${temp}" && rm -rf "${temp}"
+}
+
+cp -a /etc/shorewall "${temp}/shorewall4"
+cp -a /etc/shorewall6 "${temp}/shorewall6"
+
+/root/rbl2shorewall/rbl2shorewall.py \
+  --shorewall4-blrules "${temp}/shorewall4/blrules" \
+  --shorewall6-blrules "${temp}/shorewall6/blrules" \
+  --net-zone net \
+  --force
+
+shorewall check "${temp}/shorewall4/" >/dev/null
+echo "Shorewall check worked!"
+shorewall6 check "${temp}/shorewall6/" >/dev/null
+echo "Shorewall6 check worked!"
+
+cp -f "${temp}/shorewall4/blrules" "/etc/shorewall/blrules"
+cp -f "${temp}/shorewall6/blrules" "/etc/shorewall6/blrules"
+
+shorewall refresh >/dev/null
+echo "Shorewall refresh worked!"
+shorewall6 refresh >/dev/null
+echo "Shorewall6 refresh worked!"
