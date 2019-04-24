@@ -43,6 +43,11 @@ def set_process_name():
     setproctitle.setproctitle("%s-%s" % (APP_NAME, APP_VER))  # pylint: disable=no-member,bad-option-value,c-extension-no-member
 
 
+def set_process_low_prio():
+    """ Set process to lower nice level """
+    os.nice(39)
+
+
 def configure_root_logger(level=logging.INFO):
     """ Override root logger to use a better formatter """
     formatter = "%(asctime)s %(levelname)-8s [%(name)s] %(message)s"
@@ -289,6 +294,7 @@ def process(config):
 if __name__ == "__main__":
 
     set_process_name()
+    set_process_low_prio()
     configure_root_logger()
 
     CONFIG = get_arguments_from_cmd_line()
