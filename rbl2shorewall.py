@@ -260,7 +260,7 @@ def process(config):
     process_spamhaus_edrop(ipv4_dict)
     process_spamhaus_dropv6(ipv6_dict)
 
-    process_myip_full_resp(ipv4_dict, ipv6_dict)
+    #process_myip_full_resp(ipv4_dict, ipv6_dict)
 
     LOGGER.info("Got %d IPv4 subnet/address sanitized", len(ipv4_dict))
     LOGGER.info("Got %d IPv6 subnet/address sanitized", len(ipv6_dict))
